@@ -4,7 +4,7 @@ FROM ubuntu:xenial
 RUN DEBIAN_FRONTEND=noninteractive \
  && apt-get update \
  && apt-get install -y libfuse2 libc-bin fuse wget \
- && wget https://vc536.pcloud.com/dHZvVaD6QZ8ow4zYZDHMGZZiyn1a7Z2ZZ3vVZkZvLyi7ZllWGAwFf0GQ9kW2rEUrdIhYV0I0X/pcloudcc_2.1.0-1_amd64_ubuntu_18.04.deb \
+ && wget `wget -q -O - https://my.pcloud.com/publink/show\?code\=XZvLyi7Zsz7t1H0aYIFiawL4LSgN3uxLBUJX  | grep downloadlink | sed -e 's/.*https/https/' -e 's/".*//' -e 's/\\\\//g'` \
  && dpkg -i pcloudcc_2.1.0-1_amd64_ubuntu_18.04.deb \
  && rm -f pcloudcc_2.1.0-1_amd64_ubuntu_18.04.deb \
  && apt-get clean \
