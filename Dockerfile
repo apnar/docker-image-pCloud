@@ -2,7 +2,7 @@ FROM ubuntu:focal
 
 ENV DEBIAN_FRONTEND="noninteractive" TZ="Europe/Berlin"
 
-RUN apt-get update
+RUN apt-get update && apt-get upgrade
 RUN apt-get install -y --no-install-recommends cmake g++ git libboost-program-options-dev libboost-system-dev libcurl4-gnutls-dev libfuse-dev libudev-dev make zlib1g-dev
 RUN apt-get install -y --reinstall ca-certificates
 RUN cd /usr/src \
@@ -17,8 +17,8 @@ RUN apt-get update \
        lsb-release \
     && rm -rf /var/lib/apt/lists/*
 
-COPY --from=builder /usr/src/console-client/pCloudCC/pcloudcc /usr/bin/pcloudcc
-COPY --from=builder /usr/src/console-client/pCloudCC/libpcloudcc_lib.so /usr/lib/libpcloudcc_lib.so
+COPY --from=build /usr/src/console-client/pCloudCC/pcloudcc /usr/bin/pcloudcc
+COPY --from=build /usr/src/console-client/pCloudCC/libpcloudcc_lib.so /usr/lib/libpcloudcc_lib.so
 
 # Add startup script
 COPY start.sh /
