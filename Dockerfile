@@ -2,19 +2,10 @@ FROM ubuntu:focal
 
 ENV DEBIAN_FRONTEND="noninteractive" TZ="Europe/Berlin"
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-       cmake \
-       g++ \
-       git \
-       libboost-program-options-dev \
-       libboost-system-dev \
-       libcurl4-gnutls-dev \
-       libfuse-dev \
-       libudev-dev \
-       make \
-       zlib1g-dev \
-    && cd /usr/src \
+RUN apt-get update
+RUN apt-get install -y --no-install-recommends cmake g++ git libboost-program-options-dev libboost-system-dev libcurl4-gnutls-dev libfuse-dev libudev-dev make zlib1g-dev
+RUN apt-get install --reinstall ca-certificates
+RUN cd /usr/src \
     && git clone https://github.com/pcloudcom/console-client \
     && cd console-client/pCloudCC \
     && cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=/usr . \
