@@ -17,8 +17,8 @@ RUN apt-get update \
        lsb-release \
     && rm -rf /var/lib/apt/lists/*
 
-COPY --from=builder /usr/bin/pcloudcc /usr/bin/pcloudcc
-COPY --from=builder /usr/lib/libpcloudcc_lib.so /usr/lib/libpcloudcc_lib.so
+COPY --from=builder /usr/src/console-client/pCloudCC/pcloudcc /usr/bin/pcloudcc
+COPY --from=builder /usr/src/console-client/pCloudCC/libpcloudcc_lib.so /usr/lib/libpcloudcc_lib.so
 
 # Add startup script
 COPY start.sh /
