@@ -4,7 +4,7 @@ ENV DEBIAN_FRONTEND="noninteractive" TZ="Europe/Berlin"
 
 RUN apt-get update
 RUN apt-get install -y --no-install-recommends cmake g++ git libboost-program-options-dev libboost-system-dev libcurl4-gnutls-dev libfuse-dev libudev-dev make zlib1g-dev
-RUN apt-get install --reinstall ca-certificates
+RUN apt-get install -y --reinstall ca-certificates
 RUN cd /usr/src \
     && git clone https://github.com/pcloudcom/console-client \
     && cd console-client/pCloudCC \
