@@ -4,6 +4,20 @@ set -e
 # Options for starting Ganesha
 : ${PCLOUD_USER:=""}
 : ${PCLOUD_MOUNT:="/data"}
+: ${USER:="nobody"}
+: ${GROUP:="users"}
+
+if [ ! -d "${PCLOUD_MOUNT}" ]
+then
+  echo "Creating mount dir (${PCLOUD_MOUNT})"
+  mkdir -p ${PCLOUD_MOUNT}
+  echo "Setting owner rights (${USER}:${GROUP} to ${PCLOUD_MOUNT})"
+  chown -R ${USER}:${GROUP} ${PCLOUD_MOUNT}
+else
+  echo "Setting owner rights (${USER}:${GROUP} to ${PCLOUD_MOUNT})"
+  chown -R ${USER}:${GROUP} ${PCLOUD_MOUNT}
+fi
+
 
 if [ ! -f /root/.pcloud/data.db ]
 then
