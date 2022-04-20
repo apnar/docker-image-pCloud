@@ -3,6 +3,7 @@ set -e
 
 # Options for starting Ganesha
 : ${PCLOUD_USER:=""}
+: ${PCLOUD_2FA:=""}
 : ${PCLOUD_MOUNT:="/data"}
 : ${USER:="nobody"}
 : ${GROUP:="users"}
@@ -18,11 +19,15 @@ else
   chown -R ${USER}:${GROUP} ${PCLOUD_MOUNT}
 fi
 
+if [ "${PCLOUD_2FA}" != "" ]
+then
+  PCLOUD_2FA=-t ${PCLOUD_2FA}
+fi
 
 if [ ! -f /root/.pcloud/data.db ]
 then
   echo "Starting pcloud Container, please run the folloring line to login to pcloud"
-  echo "/usr/bin/pcloudcc -u ${PCLOUD_USER} -m ${PCLOUD_MOUNT} -p -s"
+  echo "/usr/bin/pcloudcc -u ${PCLOUD_USER} -m ${PCLOUD_MOUNT} -p -s ${PCLOUD_2FA}"
   exec sleep infinity
 fi
 
