@@ -5,7 +5,10 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-reco
     && apt-get install -y --reinstall ca-certificates \
     && cd /usr/src \
     && git clone https://github.com/pcloudcom/console-client \
-    && cd console-client/pCloudCC \
+    && cd console-client \
+    && git fetch origin pull/163/head:tfa-support \
+    && git checkout tfa-support \
+    && cd pCloudCC \
     && cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=/usr . \
     && make pclsync mbedtls install/strip
 
