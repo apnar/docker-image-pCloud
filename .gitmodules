@@ -1,0 +1,3 @@
+[submodule "dependencies/console-client"]
+	path = dependencies/console-client
+	url = https://github.com/pcloudcom/console-client.git

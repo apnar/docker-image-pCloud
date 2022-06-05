@@ -11,4 +11,14 @@ updates:
     directory: "/" # Location of package manifests
     # Check for updates once a week
     schedule:
+      interval: "weekly"
+	labels:
+		- "docker-dependencies"
+  - package-ecosystem: "gitsubmodule" # See documentation for possible values
+    # Look for a `Dockerfile` in the `root` directory
+    directory: "/dependencies/console-client/" # Location of package manifests
+    # Check for updates once a week
+    schedule:
       interval: "daily"
+	labels:
+      - "docker-dependencies"
