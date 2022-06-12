@@ -24,11 +24,13 @@ jobs:
            SAVED_COMMIT_HASH=`cat ../main/dependencies/console-client-commit` >> $GITHUB_ENV
     - name: Exit if same hash
       if: env.REMOTE_COMMIT_HASH == env.SAVED_COMMIT_HASH
-      run: echo "The same hash"
+      run: echo 'The same hash'
     - name: Commit if not the same
+      working-directory: main
       if: env.REMOTE_COMMIT_HASH != env.SAVED_COMMIT_HASH
-      - run: echo "$SAVED_COMMIT_HASH" > dependencies/console-client-commit
-        working-directory: main
+      run: echo "$SAVED_COMMIT_HASH" > dependencies/console-client-commit
+    - name: Tester
+      if: env.REMOTE_COMMIT_HASH != env.SAVED_COMMIT_HASH
       uses: Andro999b/push@v1.3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
