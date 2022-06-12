@@ -1,0 +1,34 @@
+name: schedule
+on:
+  schedule:
+    - cron: "0 6 * * *"
+
+jobs:
+  eins:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        path: main
+    - name: Checkout Remote
+      uses: actions/checkout@v3
+      with:
+        repository: 'pcloudcom/console-client'
+        ref: 'master'
+        path: remote
+    - name: Check remote commit
+      working-directory: remote
+      run: |
+           REMOTE_COMMIT_HASH=`git rev-parse --short HEAD` >> $GITHUB_ENV
+           SAVED_COMMIT_HASH=`cat ../main/dependencies/console-client-commit` >> $GITHUB_ENV
+    - name: Exit if same hash
+      if: env.REMOTE_COMMIT_HASH == env.SAVED_COMMIT_HASH
+      run: # exit_with_success
+    - name: 
+      if: env.REMOTE_COMMIT_HASH != env.SAVED_COMMIT_HASH
+      - run: echo "$SAVED_COMMIT_HASH" > dependencies/console-client-commit
+        working-directory: main
+      uses: Andro999b/push@v1.3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
