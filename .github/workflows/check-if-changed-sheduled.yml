@@ -24,8 +24,8 @@ jobs:
            SAVED_COMMIT_HASH=`cat ../main/dependencies/console-client-commit` >> $GITHUB_ENV
     - name: Exit if same hash
       if: env.REMOTE_COMMIT_HASH == env.SAVED_COMMIT_HASH
-      run: exit 0 # exit_with_success
-    - name: 
+      run: exit 0
+    - name: Commit if not the same
       if: env.REMOTE_COMMIT_HASH != env.SAVED_COMMIT_HASH
       - run: echo "$SAVED_COMMIT_HASH" > dependencies/console-client-commit
         working-directory: main
