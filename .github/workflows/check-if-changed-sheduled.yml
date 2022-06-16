@@ -2,7 +2,10 @@ name: schedule
 on:
   schedule:
     - cron: "0 6 * * *"
-
+#  push:
+#    branches: [ master ]
+#  pull_request:
+#    branches: [ master ]
 jobs:
   eins:
     runs-on: ubuntu-latest
@@ -14,23 +17,32 @@ jobs:
     - name: Checkout Remote
       uses: actions/checkout@v3
       with:
-        repository: 'pcloudcom/console-client'
-        ref: 'master'
+        repository: pcloudcom/console-client
+        ref: master
         path: remote
-    - name: Check remote commit
+    - name: Set ENV variables
       run: |
-        cd remote
-        REMOTE_COMMIT_HASH=`git rev-parse --short HEAD` >> $GITHUB_ENV
-        cd ../main
-        SAVED_COMMIT_HASH=`cat dependencies/console-client-commit` >> $GITHUB_ENV
+        echo "REMOTE_COMMIT_HASH=$(git -C remote rev-parse --short HEAD)" >> $GITHUB_ENV
+        echo "SAVED_COMMIT_HASH=$(cat main/dependencies/console-client-commit)" >> $GITHUB_ENV
+    - name: echo Remote
+      run: echo ${{env.REMOTE_COMMIT_HASH}}
+    - name: echo Saved
+      run: echo ${{env.SAVED_COMMIT_HASH}}
     - name: Exit if same hash
-      if: env.REMOTE_COMMIT_HASH == env.SAVED_COMMIT_HASH
-      run: echo 'The same hash'
+      if: ${{ env.REMOTE_COMMIT_HASH == env.SAVED_COMMIT_HASH }}
+      run: echo "The same hash"
     - name: Commit if not the same
-      if: env.REMOTE_COMMIT_HASH != env.SAVED_COMMIT_HASH
-      run: echo "$SAVED_COMMIT_HASH" > dependencies/console-client-commit
-    - name: Tester
-      if: env.REMOTE_COMMIT_HASH != env.SAVED_COMMIT_HASH
-      uses: Andro999b/push@v1.3
+      if: ${{ env.REMOTE_COMMIT_HASH != env.SAVED_COMMIT_HASH }}
+      run: echo "${{ env.REMOTE_COMMIT_HASH }}" > main/dependencies/console-client-commit
+    - name: Commit changes an push it to remote
+      if: ${{ env.REMOTE_COMMIT_HASH != env.SAVED_COMMIT_HASH }}
+      uses: actions-x/commit@v6
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+        email: 41898282+github-actions[bot]@users.noreply.github.com
+        name: GitHub Actions
+        branch: master
+        files: dependencies/console-client-commit
+        repository: https://github.com/DjSni/docker-image-pCloud
+        token: ${{ secrets.GITHUB_TOKEN }}
+        force: false
+        directory: main/
