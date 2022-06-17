@@ -1,4 +1,4 @@
-name: schedule
+name: "schedule check and build"
 on:
   schedule:
     - cron: "0 6 * * *"
@@ -7,7 +7,7 @@ on:
 #  pull_request:
 #    branches: [ master ]
 jobs:
-  eins:
+  first:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -24,13 +24,16 @@ jobs:
       run: |
         echo "REMOTE_COMMIT_HASH=$(git -C remote rev-parse --short HEAD)" >> $GITHUB_ENV
         echo "SAVED_COMMIT_HASH=$(cat main/dependencies/console-client-commit)" >> $GITHUB_ENV
+        echo "REMOTE_VERSION=$(grep -rn 'remote/pCloudCC/main.cpp' -e 'version = "' | grep -Po 'version = "\K[^"]*')" >> $GITHUB_ENV
     - name: echo Remote
       run: echo ${{env.REMOTE_COMMIT_HASH}}
     - name: echo Saved
       run: echo ${{env.SAVED_COMMIT_HASH}}
+    - name: echo Version
+      run: echo ${{env.REMOTE_VERSION}}
     - name: Exit if same hash
       if: ${{ env.REMOTE_COMMIT_HASH == env.SAVED_COMMIT_HASH }}
-      run: echo "The same hash"
+      run: echo "The same hash - it's time to shine :)"
     - name: Commit if not the same
       if: ${{ env.REMOTE_COMMIT_HASH != env.SAVED_COMMIT_HASH }}
       run: echo "${{ env.REMOTE_COMMIT_HASH }}" > main/dependencies/console-client-commit
@@ -46,3 +49,14 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         force: false
         directory: main/
+    - name: Build the Docker image
+      if: ${{ env.REMOTE_COMMIT_HASH == env.SAVED_COMMIT_HASH }}
+      run: cd main; docker build . --file Dockerfile --tag dersni/docker-image-pcloud:${{env.REMOTE_VERSION}}.${{ github.run_number }}-${{env.REMOTE_COMMIT_HASH}}
+    - name: Push to Docker Hub
+      if: ${{ env.REMOTE_COMMIT_HASH == env.SAVED_COMMIT_HASH }}
+      uses: docker/build-push-action@v1
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        repository: dersni/docker-image-pcloud
+        tags: latest, ${{env.REMOTE_VERSION}}.${{ github.run_number }}-${{env.REMOTE_COMMIT_HASH}}
