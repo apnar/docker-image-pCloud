@@ -51,19 +51,19 @@ jobs:
         directory: main/
 # Build the new way (Docker) 
     - name: Set up QEMU
-      if: ${{ env.REMOTE_COMMIT_HASH == env.SAVED_COMMIT_HASH }}
+      if: ${{ env.REMOTE_COMMIT_HASH != env.SAVED_COMMIT_HASH }}
       uses: docker/setup-qemu-action@v2
     - name: Set up Docker Buildx
-      if: ${{ env.REMOTE_COMMIT_HASH == env.SAVED_COMMIT_HASH }}
+      if: ${{ env.REMOTE_COMMIT_HASH != env.SAVED_COMMIT_HASH }}
       uses: docker/setup-buildx-action@v2
     - name: Login to DockerHub
-      if: ${{ env.REMOTE_COMMIT_HASH == env.SAVED_COMMIT_HASH }}
+      if: ${{ env.REMOTE_COMMIT_HASH != env.SAVED_COMMIT_HASH }}
       uses: docker/login-action@v2
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
     - name: Build and push
-      if: ${{ env.REMOTE_COMMIT_HASH == env.SAVED_COMMIT_HASH }}
+      if: ${{ env.REMOTE_COMMIT_HASH != env.SAVED_COMMIT_HASH }}
       uses: docker/build-push-action@v3
       with:
         push: true
